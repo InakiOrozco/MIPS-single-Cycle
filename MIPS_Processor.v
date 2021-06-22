@@ -105,8 +105,6 @@ ROM
 );
 
 
-
-
 Adder
 PC_Puls_4
 (
@@ -122,6 +120,7 @@ PC_Puls_4
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
+
 Multiplexer_2_to_1
 #(
 	.N_BITS(5)
@@ -161,7 +160,7 @@ SIGNED_EXTEND_FOR_CONSTANTS
 );
 
 
-
+//Segundo multiplexor
 Multiplexer_2_to_1
 #(
 	.N_BITS(32)
@@ -195,6 +194,8 @@ ALU_UNIT
 	.a_i(read_data_1_w),
 	.b_i(read_ata_2_r_nmmediate_w),
 	.zero_o(zero_w),
+	.shamt_i(instruction_w[10:6]),
+	.imm_i(instruction_w[15:0]),
 	.alu_data_o(alu_result_w)
 );
 
