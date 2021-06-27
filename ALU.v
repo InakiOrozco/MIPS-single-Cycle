@@ -28,13 +28,20 @@ module ALU
 	output reg [31:0] alu_data_o
 );
 
-localparam ADD = 4'b0011;
-localparam ORI = 4'b0111;
+localparam ADD = 4'b0000;
 localparam SUB = 4'b0001;
-localparam SRL = 4'b1111;
-localparam SLL = 4'b1011;
-localparam LUI = 4'b0101;
-
+localparam OR  = 4'b0010;
+localparam ORI = 4'b0011;
+localparam SRL = 4'b0100;
+localparam SLL = 4'b0101;
+localparam LUI = 4'b0110;
+localparam ANDI = 4'b0111;
+localparam LW = 4'b1000;
+localparam SW = 4'b1001;
+//localparam BEQ = 4'b1010;
+//localparam BNE = 4'b1011;
+localparam NOR = 4'b1100;
+localparam AND = 4'b1101;
    
    always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i)
      begin
@@ -43,6 +50,9 @@ localparam LUI = 4'b0101;
 		  ADD: // add
 			alu_data_o = a_i + b_i;
 		  
+		  OR:
+			alu_data_o = a_i | b_i;
+			
 		  ORI:
 			alu_data_o = a_i | {16'b0, imm_i};
 		  
@@ -58,6 +68,31 @@ localparam LUI = 4'b0101;
 		  LUI:
 			alu_data_o = {imm_i, 16'b0};
 			
+		  AND:
+			alu_data_o = a_i & b_i;		  
+			
+		  ANDI: 
+			alu_data_o = a_i & {16'b0, imm_i};
+		  
+/*		  LW:
+		 //alu_data_o = M[a_i + b_i]
+			alu_data_o = a_i;
+		  
+		  SW:
+			//M[a_i + b_i] = alu_data_o
+			alu_data_o = a_i;
+		  
+		  BEQ:
+			
+		  	alu_data_o = a_i;
+
+		  BNE:
+			alu_data_o = a_i;
+*/			
+		  NOR: 
+			alu_data_o = ~(a_i | b_i);
+
+		  
 		default:
 			alu_data_o = 0;
 		endcase // case(control)

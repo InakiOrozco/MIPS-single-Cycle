@@ -31,6 +31,11 @@ localparam R_TYPE = 0;
 localparam I_TYPE_ADDI = 6'h8;
 localparam I_TYPE_ORI = 6'hd;
 localparam I_TYPE_LUI = 6'hf;
+localparam I_TYPE_ANDI = 6'hc;
+localparam I_TYPE_LW = 6'h23;
+localparam I_TYPE_SW = 6'h2b;
+//localparam I_TYPE_BEQ = 6'h4;
+//localparam I_TYPE_BNE = 6'h5;
 
 
 reg [10:0] control_values_r;
@@ -40,9 +45,12 @@ always@(opcode_i) begin
 	case(opcode_i)
 		
 		R_TYPE		: control_values_r = 11'b1_001_00_00_111;
-		I_TYPE_ADDI	: control_values_r = 11'b0_101_00_00_100;
-		I_TYPE_ORI	: control_values_r = 11'b0_101_00_00_101;
-		I_TYPE_LUI	: control_values_r = 11'b0_101_00_00_110;
+		I_TYPE_ADDI	: control_values_r = 11'b0_101_00_00_000;
+		I_TYPE_ORI	: control_values_r = 11'b0_101_00_00_001;
+		I_TYPE_LUI	: control_values_r = 11'b0_101_00_00_010;
+		I_TYPE_ANDI : control_values_r = 11'b0_101_00_00_011;
+		I_TYPE_LW 	: control_values_r = 11'b0_111_10_00_100;
+		I_TYPE_SW 	: control_values_r = 11'b0_100_01_00_101;
 
 		default:
 			control_values_r = 11'b0000000000;
