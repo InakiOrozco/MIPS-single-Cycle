@@ -23,7 +23,8 @@ module Control
 	output mem_write_o,
 	output alu_src_o,
 	output reg_write_o,
-	output [2:0]alu_op_o
+	output jump_signal_o,
+	output [3:0]alu_op_o
 );
 
 
@@ -34,39 +35,46 @@ localparam I_TYPE_LUI = 6'hf;
 localparam I_TYPE_ANDI = 6'hc;
 localparam I_TYPE_LW = 6'h23;
 localparam I_TYPE_SW = 6'h2b;
-//localparam I_TYPE_BEQ = 6'h4;
-//localparam I_TYPE_BNE = 6'h5;
+localparam I_TYPE_BEQ = 6'h4;
+localparam I_TYPE_BNE = 6'h5;
+localparam J_TYPE_JMP = 6'h2;
+localparam J_TYPE_JAL = 6'h3;
 
-
-reg [10:0] control_values_r;
+reg [12:0] control_values_r;
 
 always@(opcode_i) begin
 
 	case(opcode_i)
 		
-		R_TYPE		: control_values_r = 11'b1_001_00_00_111;
-		I_TYPE_ADDI	: control_values_r = 11'b0_101_00_00_000;
-		I_TYPE_ORI	: control_values_r = 11'b0_101_00_00_001;
-		I_TYPE_LUI	: control_values_r = 11'b0_101_00_00_010;
-		I_TYPE_ANDI : control_values_r = 11'b0_101_00_00_011;
-		I_TYPE_LW 	: control_values_r = 11'b0_111_10_00_100;
-		I_TYPE_SW 	: control_values_r = 11'b0_100_01_00_101;
-
+		R_TYPE		: control_values_r = 13'b1_001_00_00_0_1111;
+		I_TYPE_ADDI	: control_values_r = 13'b0_101_00_00_0_0000;
+		I_TYPE_ORI	: control_values_r = 13'b0_101_00_00_0_0001;
+		I_TYPE_LUI	: control_values_r = 13'b0_101_00_00_0_0010;
+		I_TYPE_ANDI : control_values_r = 13'b0_101_00_00_0_0011;
+		/*
+		I_TYPE_LW 	: control_values_r = 12'b0_111_10_00_0100;
+		I_TYPE_SW 	: control_values_r = 12'b0_100_01_00_0101;
+		I_TYPE_BEQ  : control_values_r = 12'b0_xxx_xx_01_0110;
+		I_TYPE_BNE	: control_values_r = 12'b0_xxx_xx_10_0111;
+		J_TYPE_JMP	: control_values_r = 12'b1_001_00_00_1_1000;
+		J_TYPE_JAL	: control_values_r = 12'b1_001_00_00_1_1001;*/
+		
 		default:
-			control_values_r = 11'b0000000000;
+			control_values_r = 12'b00000000000;
 	endcase
 		
 end	
 	
-assign reg_dst_o = control_values_r[10];
-assign alu_src_o = control_values_r[9];
-assign mem_to_reg_o = control_values_r[8];
-assign reg_write_o = control_values_r[7];
-assign mem_read_o = control_values_r[6];
-assign mem_write_o = control_values_r[5];
-assign branch_ne_o = control_values_r[4];
-assign branch_eq_o = control_values_r[3];
-assign alu_op_o = control_values_r[2:0];	
+assign reg_dst_o = control_values_r[12];
+assign alu_src_o = control_values_r[11];
+assign mem_to_reg_o = control_values_r[10];
+assign reg_write_o = control_values_r[9];
+assign mem_read_o = control_values_r[8];
+assign mem_write_o = control_values_r[7];
+assign branch_ne_o = control_values_r[6];
+assign branch_eq_o = control_values_r[5];
+assign jump_signal_o = control_values_r[4];
+assign alu_op_o = control_values_r[3:0];	
 
 endmodule
 

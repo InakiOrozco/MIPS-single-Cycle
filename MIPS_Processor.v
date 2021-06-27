@@ -48,12 +48,15 @@ wire zero_and_branch_eq_W;
 wire or_for_branch_w;
 wire alu_rc_w;
 wire reg_write_w;
+wire jump_signal_w;
 wire zero_w;
 wire [2:0] alu_op_w;
 wire [3:0] alu_operation_w;
 wire [4:0] write_register_w;
 wire [31:0] mux_pc_w;
 wire [31:0] pc_w;
+wire [31:0] jump_pc_w;
+wire [31:0] program_counter_w;
 wire [31:0] instruction_w;
 wire [31:0] read_data_1_w;
 wire [31:0] read_data_2_w;
@@ -90,7 +93,7 @@ PC
 (
 	.clk(clk),
 	.reset(reset),
-	.new_pc_i(pc_plus_4_w),
+	.new_pc_i(program_counter_w),
 	.pc_value_o(pc_w)
 );
 
@@ -160,7 +163,6 @@ SIGNED_EXTEND_FOR_CONSTANTS
 );
 
 
-//Segundo multiplexor
 Multiplexer_2_to_1
 #(
 	.N_BITS(32)
@@ -172,6 +174,21 @@ MUX_READ_DATA_2_OR_IMMEDIATE
 	.data_1_i(inmmediate_extend_w),
 	
 	.mux_o(read_ata_2_r_nmmediate_w)
+
+);
+
+
+Multiplexer_2_to_1
+#(
+	.N_BITS(32)
+)
+MUX_ADDER_OR_JUMP
+(
+	.selector_i(jump_signal_w),
+	.data_0_i(pc_plus_4_w),
+	.data_1_i(jump_pc_w),
+	
+	.mux_o(program_counter_w)
 
 );
 
@@ -196,6 +213,7 @@ ALU_UNIT
 	.zero_o(zero_w),
 	.shamt_i(instruction_w[10:6]),
 	.imm_i(instruction_w[15:0]),
+	.address_i(instruction_w[25:0]),
 	.alu_data_o(alu_result_w)
 );
 
@@ -203,4 +221,3 @@ assign alu_result_o = alu_result_w;
 
 
 endmodule
-

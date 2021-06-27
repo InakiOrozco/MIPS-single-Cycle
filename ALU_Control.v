@@ -14,7 +14,7 @@
 ******************************************************************/
 module ALU_Control
 (
-	input [2:0] alu_op_i,
+	input [3:0] alu_op_i,
 	input [5:0] alu_function_i,
 	
 	output [3:0] alu_operation_o
@@ -22,25 +22,25 @@ module ALU_Control
 );
 
 
-localparam R_TYPE_ADD    = 9'b111_100000;
-localparam I_TYPE_ADDI	 = 9'b000_xxxxxx;
-localparam R_TYPE_OR     = 9'b111_100101;
-localparam R_TYPE_SUB	 = 9'b111_100010;
-localparam I_TYPE_ORI	 = 9'b001_xxxxxx;
-localparam R_TYPE_SRL	 = 9'b111_000010;
-localparam R_TYPE_SLL	 = 9'b111_000000;
-localparam I_TYPE_LUI 	 = 9'b010_xxxxxx;
-localparam I_TYPE_ANDI 	 = 9'b011_xxxxxx;
-localparam I_TYPE_LW 	 = 9'b100_xxxxxx;
-localparam I_TYPE_SW 	 = 9'b101_xxxxxx;
-//localparam I_TYPE_BEQ 	 = 9'b111_xxxxxx;
-//localparam I_TYPE_BNE 	 = 9'b111_xxxxxx;
-localparam R_TYPE_NOR	 = 9'b111_100111;
-localparam R_TYPE_AND	 = 9'b111_100100;
+localparam R_TYPE_ADD    = 10'b1111_100000;
+localparam I_TYPE_ADDI	 = 10'b0000_xxxxxx;
+localparam R_TYPE_OR     = 10'b1111_100101;
+localparam R_TYPE_SUB	 = 10'b1111_100010;
+localparam I_TYPE_ORI	 = 10'b0001_xxxxxx;
+localparam R_TYPE_SRL	 = 10'b1111_000010;
+localparam R_TYPE_SLL	 = 10'b1111_000000;
+localparam I_TYPE_LUI 	 = 10'b0010_xxxxxx;
+localparam I_TYPE_ANDI 	 = 10'b0011_xxxxxx;
+localparam I_TYPE_LW 	 = 10'b0100_xxxxxx;
+localparam I_TYPE_SW 	 = 10'b0101_xxxxxx;
+//localparam I_TYPE_BEQ 	 = 10'b111_xxxxxx;
+//localparam I_TYPE_BNE 	 = 10'b111_xxxxxx;
+localparam R_TYPE_NOR	 = 10'b1111_100111;
+localparam R_TYPE_AND	 = 10'b1111_100100;
 
 
 reg [3:0] alu_control_values_r;
-wire [8:0] selector_w;
+wire [9:0] selector_w;
 
 assign selector_w = {alu_op_i, alu_function_i};
 

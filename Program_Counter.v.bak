@@ -21,6 +21,7 @@ module Program_Counter
 	input reset,
 	input  [N_BITS-1:0] new_pc_i,
 	
+	
 	output reg [N_BITS-1:0] pc_value_o
 );
 

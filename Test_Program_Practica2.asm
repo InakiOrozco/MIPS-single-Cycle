@@ -11,4 +11,6 @@ and $t4, $s2, $t2
 andi $t5, $s2, 3
 or $t6, $s2, $s3
 nor  $t7, $s2, $s3
+j Exit
 
+Exit: nop

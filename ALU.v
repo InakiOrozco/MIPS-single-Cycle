@@ -24,6 +24,8 @@ module ALU
 	input [31:0] b_i,
 	input [4:0] shamt_i,
 	input [15:0] imm_i,
+	input [25:0] address_i,
+
 	output reg zero_o,
 	output reg [31:0] alu_data_o
 );
