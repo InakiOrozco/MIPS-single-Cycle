@@ -26,7 +26,7 @@ module Program_Counter
 
 always@(negedge reset or posedge clk) begin
 	if(reset==0)
-		pc_value_o <= 0;
+		pc_value_o <= 32'b00000000010000000000000000000000;
 	else	
 		pc_value_o<=new_pc_i;
 end

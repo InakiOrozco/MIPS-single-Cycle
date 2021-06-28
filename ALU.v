@@ -25,7 +25,9 @@ module ALU
 	input [4:0] shamt_i,
 	input [15:0] imm_i,
 	input [25:0] address_i,
+	input [31:0] pc_i,
 
+	output reg [31:0]jump_pc_o,
 	output reg zero_o,
 	output reg [31:0] alu_data_o
 );
@@ -47,7 +49,7 @@ localparam AND = 4'b1101;
 localparam JMP	 = 4'b1110;
 localparam JAL	 = 4'b1111;
    
-   always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i)
+   always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i or pc_i or address_i)
      begin
 		case (alu_operation_i)
 		
@@ -95,8 +97,10 @@ localparam JAL	 = 4'b1111;
 */			
 		  NOR: 
 			alu_data_o = ~(a_i | b_i);
+			
+		  JMP:
+			jump_pc_o = {pc_i[31:28], address_i, 2'b0};
 
-		  
 		default:
 			alu_data_o = 0;
 		endcase // case(control)

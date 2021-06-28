@@ -49,10 +49,13 @@ wire or_for_branch_w;
 wire alu_rc_w;
 wire reg_write_w;
 wire jump_signal_w;
+wire mem_write_w;
+wire mem_read_w;
 wire zero_w;
 wire [3:0] alu_op_w;
 wire [3:0] alu_operation_w;
 wire [4:0] write_register_w;
+wire [7:0] data_ram_w;
 wire [31:0] mux_pc_w;
 wire [31:0] pc_w;
 wire [31:0] jump_pc_w;
@@ -66,10 +69,6 @@ wire [31:0] alu_result_w;
 wire [31:0] pc_plus_4_w;
 wire [31:0] immediate_extended_w;
 wire [31:0] PCtoBranch_wire;
-
-
-
-
 
 //******************************************************************/
 //******************************************************************/
@@ -85,7 +84,10 @@ CONTROL_UNIT
 	.branch_eq_o(branch_eq_w),
 	.alu_op_o(alu_op_w),
 	.alu_src_o(alu_rc_w),
-	.reg_write_o(reg_write_w)
+	.reg_write_o(reg_write_w),
+	.jump_signal_o(jump_signal_w),
+	.mem_write_o(mem_write_w),
+	.mem_read_o(mem_read_w)
 );
 
 Program_Counter
@@ -97,13 +99,29 @@ PC
 	.pc_value_o(pc_w)
 );
 
+//RAM
+Data_Memory
+#( .DATA_WIDTH(32),
+	.MEMORY_DEPTH(256)
+)
+RAM
+(
+	.clk(clk),
+	.write_data_i(read_data_2_w),
+	.address_i(alu_result_w-32'h10010000),
+	.mem_write_i(mem_write_w),
+	.mem_read_i(mem_read_w),
+	.data_o(data_ram_w)
+);
+
+//ROM
 Program_Memory
 #(
 	.MEMORY_DEPTH(MEMORY_DEPTH)
 )
 ROM
 (
-	.address_i(pc_w),
+	.address_i(pc_w-32'h400000),
 	.instruction_o(instruction_w)
 );
 
@@ -137,8 +155,6 @@ MUX_R_TYPE_OR_I_Type
 	.mux_o(write_register_w)
 
 );
-
-
 
 Register_File
 REGISTER_FILE_UNIT
@@ -214,6 +230,8 @@ ALU_UNIT
 	.shamt_i(instruction_w[10:6]),
 	.imm_i(instruction_w[15:0]),
 	.address_i(instruction_w[25:0]),
+	.pc_i(pc_plus_4_w),
+	.jump_pc_o(jump_pc_w),
 	.alu_data_o(alu_result_w)
 );
 
