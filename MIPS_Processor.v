@@ -50,7 +50,7 @@ wire alu_rc_w;
 wire reg_write_w;
 wire jump_signal_w;
 wire zero_w;
-wire [2:0] alu_op_w;
+wire [3:0] alu_op_w;
 wire [3:0] alu_operation_w;
 wire [4:0] write_register_w;
 wire [31:0] mux_pc_w;

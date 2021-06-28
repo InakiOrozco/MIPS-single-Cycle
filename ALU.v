@@ -40,10 +40,12 @@ localparam LUI = 4'b0110;
 localparam ANDI = 4'b0111;
 localparam LW = 4'b1000;
 localparam SW = 4'b1001;
-//localparam BEQ = 4'b1010;
-//localparam BNE = 4'b1011;
+localparam BEQ = 4'b1010;
+localparam BNE = 4'b1011;
 localparam NOR = 4'b1100;
 localparam AND = 4'b1101;
+localparam JMP	 = 4'b1110;
+localparam JAL	 = 4'b1111;
    
    always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i)
      begin
