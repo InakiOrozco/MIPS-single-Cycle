@@ -53,7 +53,7 @@ wire mem_write_w;
 wire mem_read_w;
 wire zero_w;
 wire [3:0] alu_op_w;
-wire [3:0] alu_operation_w;
+wire [4:0] alu_operation_w;
 wire [4:0] write_register_w;
 wire [7:0] data_ram_w;
 wire [31:0] mux_pc_w;

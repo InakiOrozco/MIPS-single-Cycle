@@ -19,7 +19,7 @@
 
 module ALU 
 (
-	input [3:0] alu_operation_i,
+	input [4:0] alu_operation_i,
 	input [31:0] a_i,
 	input [31:0] b_i,
 	input [4:0] shamt_i,
@@ -32,22 +32,22 @@ module ALU
 	output reg [31:0] alu_data_o
 );
 
-localparam ADD = 4'b0000;
-localparam SUB = 4'b0001;
-localparam OR  = 4'b0010;
-localparam ORI = 4'b0011;
-localparam SRL = 4'b0100;
-localparam SLL = 4'b0101;
-localparam LUI = 4'b0110;
-localparam ANDI = 4'b0111;
-localparam LW = 4'b1000;
-localparam SW = 4'b1001;
-localparam BEQ = 4'b1010;
-localparam BNE = 4'b1011;
-localparam NOR = 4'b1100;
-localparam AND = 4'b1101;
-localparam JMP	 = 4'b1110;
-localparam JAL	 = 4'b1111;
+localparam ADD = 5'b00000;
+localparam SUB = 5'b00001;
+localparam OR  = 5'b00010;
+localparam ORI = 5'b00011;
+localparam SRL = 5'b00100;
+localparam SLL = 5'b00101;
+localparam LUI = 5'b00110;
+localparam ANDI = 5'b00111;
+localparam LW = 5'b01000;
+localparam SW = 5'b01001;
+localparam BEQ = 5'b01010;
+localparam BNE = 5'b01011;
+localparam NOR = 5'b01100;
+localparam AND = 5'b01101;
+localparam JMP	 = 5'b01110;
+localparam JAL	 = 5'b01111;
    
    always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i or pc_i or address_i)
      begin
@@ -87,19 +87,26 @@ localparam JAL	 = 4'b1111;
 		  SW:
 			//M[a_i + b_i] = alu_data_o
 			alu_data_o = a_i;
-		  
+		  */
 		  BEQ:
-			
-		  	alu_data_o = a_i;
-
+			if(a_i == b_i)begin		
+				jump_pc_o = pc_i + {{14{imm_i[15]}},imm_i, 2'b0};
+			end
+		  
 		  BNE:
-			alu_data_o = a_i;
-*/			
+			if(a_i != b_i)begin 	
+				jump_pc_o = pc_i + {{14{imm_i[15]}}, imm_i, 2'b0};
+			end
+			
 		  NOR: 
 			alu_data_o = ~(a_i | b_i);
 			
 		  JMP:
 			jump_pc_o = {pc_i[31:28], address_i, 2'b0};
+			
+		  /*JAL:
+			ra
+			jump_pc_o = {pc_i[31:28], address_i, 2'b0};*/
 
 		default:
 			alu_data_o = 0;

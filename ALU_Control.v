@@ -17,7 +17,7 @@ module ALU_Control
 	input [3:0] alu_op_i,
 	input [5:0] alu_function_i,
 	
-	output [3:0] alu_operation_o
+	output [4:0] alu_operation_o
 
 );
 
@@ -41,7 +41,7 @@ localparam J_TYPE_JMP	 = 10'b1000_xxxxxx;
 localparam J_TYPE_JAL	 = 10'b1001_xxxxxx;
 
 
-reg [3:0] alu_control_values_r;
+reg [4:0] alu_control_values_r;
 wire [9:0] selector_w;
 
 assign selector_w = {alu_op_i, alu_function_i};
@@ -50,25 +50,25 @@ always@(selector_w)begin
 
 	casex(selector_w)
 	
-		R_TYPE_ADD:    alu_control_values_r = 4'b0000;
-		I_TYPE_ADDI: 	alu_control_values_r = 4'b0000;
-		R_TYPE_SUB:		alu_control_values_r = 4'b0001;
-		R_TYPE_OR:		alu_control_values_r = 4'b0010;
-		I_TYPE_ORI: 	alu_control_values_r = 4'b0011;
-		R_TYPE_SRL: 	alu_control_values_r = 4'b0100;
-		R_TYPE_SLL: 	alu_control_values_r = 4'b0101;
-		I_TYPE_LUI: 	alu_control_values_r = 4'b0110;
-		I_TYPE_ANDI: 	alu_control_values_r = 4'b0111;
-		I_TYPE_LW: 		alu_control_values_r = 4'b1000;
-		I_TYPE_SW: 		alu_control_values_r = 4'b1001;
-		I_TYPE_BEQ: 	alu_control_values_r = 4'b1010;
-		I_TYPE_BNE: 	alu_control_values_r = 4'b1011;
-		R_TYPE_NOR:		alu_control_values_r = 4'b1100;
-		R_TYPE_AND:		alu_control_values_r = 4'b1101;
-		J_TYPE_JMP:		alu_control_values_r = 4'b1110;	
-		J_TYPE_JAL:		alu_control_values_r = 4'b1111;
+		R_TYPE_ADD:    alu_control_values_r = 5'b00000;
+		I_TYPE_ADDI: 	alu_control_values_r = 5'b00000;
+		R_TYPE_SUB:		alu_control_values_r = 5'b00001;
+		R_TYPE_OR:		alu_control_values_r = 5'b00010;
+		I_TYPE_ORI: 	alu_control_values_r = 5'b00011;
+		R_TYPE_SRL: 	alu_control_values_r = 5'b00100;
+		R_TYPE_SLL: 	alu_control_values_r = 5'b00101;
+		I_TYPE_LUI: 	alu_control_values_r = 5'b00110;
+		I_TYPE_ANDI: 	alu_control_values_r = 5'b00111;
+		I_TYPE_LW: 		alu_control_values_r = 5'b01000;
+		I_TYPE_SW: 		alu_control_values_r = 5'b01001;
+		I_TYPE_BEQ: 	alu_control_values_r = 5'b01010;
+		I_TYPE_BNE: 	alu_control_values_r = 5'b01011;
+		R_TYPE_NOR:		alu_control_values_r = 5'b01100;
+		R_TYPE_AND:		alu_control_values_r = 5'b01101;
+		J_TYPE_JMP:		alu_control_values_r = 5'b01110;	
+		J_TYPE_JAL:		alu_control_values_r = 5'b01111;
 		
-		default: alu_control_values_r = 4'b0000;
+		default: alu_control_values_r = 5'b11111;
 	endcase
 	
 end

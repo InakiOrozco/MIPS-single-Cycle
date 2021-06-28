@@ -53,8 +53,8 @@ always@(opcode_i) begin
 		I_TYPE_ANDI : control_values_r = 13'b0_101_00_00_0_0011;
 		I_TYPE_LW 	: control_values_r = 12'b0_111_10_00_0_0100;
 		I_TYPE_SW 	: control_values_r = 12'b0_100_01_00_0_0101;
-		I_TYPE_BEQ  : control_values_r = 12'b0_100_00_01_0_0110;
-		I_TYPE_BNE	: control_values_r = 12'b0_100_00_10_0_0111;
+		I_TYPE_BEQ  : control_values_r = 12'b0_000_00_01_1_0110;
+		I_TYPE_BNE	: control_values_r = 12'b0_000_00_10_1_0111;
 		J_TYPE_JMP	: control_values_r = 12'b0_000_00_00_1_1000;
 		J_TYPE_JAL	: control_values_r = 12'b0_001_00_00_1_1001;
 		

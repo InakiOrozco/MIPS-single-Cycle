@@ -19,7 +19,7 @@ j Exit
 
 Next:
 addi $t0, $t0, 1
-j Back
+bne $t0, $t1, Back
 
 Exit: 
 nop
