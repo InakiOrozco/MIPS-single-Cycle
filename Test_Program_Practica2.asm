@@ -11,15 +11,17 @@ or $t6, $s2, $s3
 nor  $t7, $s2, $s3
 add $t3, $t0, $t2
 and $t4, $s2, $t2
-j Next
-
-Back:
-addi $t0, $t0, 1
+addi $t0, $t1, 3
+jal branch
+addi $t2, $t0, 1
 j Exit
 
-Next:
-addi $t0, $t0, 1
-bne $t0, $t1, Back
+branch:
+addi $t0, $t0, -1
+bne $t0, $t1, branch
+jr $ra
 
-Exit: 
-nop
+Exit: nop
+
+
+

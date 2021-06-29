@@ -89,14 +89,24 @@ localparam JR	 = 5'b10000;
 			//M[a_i + b_i] = alu_data_o
 			alu_data_o = a_i;
 		  */
-		  BEQ:
-			if(a_i == b_i)begin		
-				jump_pc_o = pc_i + {{14{imm_i[15]}},imm_i, 2'b0};
+		  BEQ:begin
+		  
+				if(a_i == b_i)begin		
+					jump_pc_o = pc_i + {{14{imm_i[15]}},imm_i, 2'b0};
+				end
+				if(a_i != b_i)begin
+					jump_pc_o = pc_i;
+				end
 			end
 		  
-		  BNE:
-			if(a_i != b_i)begin 	
-				jump_pc_o = pc_i + {{14{imm_i[15]}}, imm_i, 2'b0};
+		  BNE:begin
+		  
+				if(a_i != b_i)begin 	
+					jump_pc_o = pc_i + {{14{imm_i[15]}}, imm_i, 2'b0};
+				end
+				if(a_i == b_i)begin
+					jump_pc_o = pc_i;
+				end
 			end
 			
 		  NOR: 
@@ -105,10 +115,12 @@ localparam JR	 = 5'b10000;
 		  JMP:
 			jump_pc_o = {pc_i[31:28], address_i, 2'b0};
 			
-		  /*JAL:
-			ra
-			jump_pc_o = {pc_i[31:28], address_i, 2'b0};*/
-			
+		  JAL:
+		  begin
+			jump_pc_o = {pc_i[31:28], address_i, 2'b0};
+			alu_data_o = pc_i;
+		  end
+		  
 		  JR:
 			jump_pc_o = a_i;
 

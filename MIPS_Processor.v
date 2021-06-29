@@ -48,11 +48,13 @@ wire alu_rc_w;
 wire reg_write_w;
 wire jump_signal_w;
 wire jump_register_w;
+wire return_address_w;
 wire mem_write_w;
 wire mem_read_w;
 wire zero_w;
 wire [3:0] alu_op_w;
 wire [4:0] alu_operation_w;
+wire [4:0] r_or_i_w;
 wire [4:0] write_register_w;
 wire [7:0] data_ram_w;
 wire [31:0] mux_pc_w;
@@ -147,6 +149,20 @@ MUX_R_TYPE_OR_I_Type
 	.data_0_i(instruction_w[20:16]),
 	.data_1_i(instruction_w[15:11]),
 	
+	.mux_o(r_or_i_w)
+
+);
+
+Multiplexer_2_to_1
+#(
+	.N_BITS(5)
+)
+MUX_REG_OR_RA
+(
+	.selector_i(return_address_w),
+	.data_0_i(r_or_i_w),
+	.data_1_i(5'b11111),
+	
 	.mux_o(write_register_w)
 
 );
@@ -158,8 +174,8 @@ REGISTER_FILE_UNIT
 	.reset(reset),
 	.reg_write_i(reg_write_w),
 	.write_register_i(write_register_w),
-	.read_register_1_i(instruction_w[25:21]),
-	.read_register_2_i(instruction_w[20:16]),
+	.read_register_1_i(instruction_w[25:21]), //rs
+	.read_register_2_i(instruction_w[20:16]), //rt
 	.write_data_i(alu_result_w),
 	.read_data_1_o(read_data_1_w),
 	.read_data_2_o(read_data_2_w)
@@ -210,7 +226,8 @@ ALU_CTRL
 	.alu_op_i(alu_op_w),
 	.alu_function_i(instruction_w[5:0]),
 	.alu_operation_o(alu_operation_w),
-	.jump_register_o(jump_register_w)
+	.jump_register_o(jump_register_w),
+	.return_address_o(return_address_w)
 
 );
 

@@ -14,5 +14,5 @@ I sw
 I beq*
 I bne*
 J j*
-J jal
-R jr
+J jal*
+R jr*
