@@ -16,8 +16,6 @@ module Control
 	input [5:0]opcode_i,
 	
 	output reg_dst_o,
-	output branch_eq_o,
-	output branch_ne_o,
 	output mem_read_o,
 	output mem_to_reg_o,
 	output mem_write_o,
@@ -46,35 +44,31 @@ always@(opcode_i) begin
 
 	case(opcode_i)
 		
-		R_TYPE		: control_values_r = 13'b1_001_00_00_0_1111;
-		I_TYPE_ADDI	: control_values_r = 13'b0_101_00_00_0_0000;
-		I_TYPE_ORI	: control_values_r = 13'b0_101_00_00_0_0001;
-		I_TYPE_LUI	: control_values_r = 13'b0_101_00_00_0_0010;
-		I_TYPE_ANDI : control_values_r = 13'b0_101_00_00_0_0011;
-		I_TYPE_LW 	: control_values_r = 12'b0_111_10_00_0_0100;
-		I_TYPE_SW 	: control_values_r = 12'b0_100_01_00_0_0101;
-		I_TYPE_BEQ  : control_values_r = 12'b0_000_00_01_1_0110;
-		I_TYPE_BNE	: control_values_r = 12'b0_000_00_10_1_0111;
-		J_TYPE_JMP	: control_values_r = 12'b0_000_00_00_1_1000;
-		J_TYPE_JAL	: control_values_r = 12'b0_001_00_00_1_1001;
+		R_TYPE		: control_values_r = 11'b1_001_00_0_1111;
+		I_TYPE_ADDI	: control_values_r = 11'b0_101_00_0_0000;
+		I_TYPE_ORI	: control_values_r = 11'b0_101_00_0_0001;
+		I_TYPE_LUI	: control_values_r = 11'b0_101_00_0_0010;
+		I_TYPE_ANDI : control_values_r = 11'b0_101_00_0_0011;
+		I_TYPE_LW 	: control_values_r = 11'b0_111_10_0_0100;
+		I_TYPE_SW 	: control_values_r = 11'b0_100_01_0_0101;
+		I_TYPE_BEQ  : control_values_r = 11'b0_000_00_1_0110;
+		I_TYPE_BNE	: control_values_r = 11'b0_000_00_1_0111;
+		J_TYPE_JMP	: control_values_r = 11'b0_000_00_1_1000;
+		J_TYPE_JAL	: control_values_r = 11'b0_001_00_1_1001;
 		
 		default:
-			control_values_r = 12'b00000000000;
+			control_values_r = 11'b00000000000;
 	endcase
 		
 end	
 	
-assign reg_dst_o = control_values_r[12]; //si es rd o rt el destino (las tipo R usan rd y las tipo I usan rt)
-assign alu_src_o = control_values_r[11]; //si es tipo R o tipo I
-assign mem_to_reg_o = control_values_r[10];
-assign reg_write_o = control_values_r[9];
-assign mem_read_o = control_values_r[8];
-assign mem_write_o = control_values_r[7];
-assign branch_ne_o = control_values_r[6];
-assign branch_eq_o = control_values_r[5];
+assign reg_dst_o = control_values_r[10]; //si es rd o rt el destino (las tipo R usan rd y las tipo I usan rt)
+assign alu_src_o = control_values_r[9]; //si es tipo R o tipo I
+assign mem_to_reg_o = control_values_r[8];
+assign reg_write_o = control_values_r[7];
+assign mem_read_o = control_values_r[6];
+assign mem_write_o = control_values_r[5];
 assign jump_signal_o = control_values_r[4]; //si es una tipo J
 assign alu_op_o = control_values_r[3:0];	
 
 endmodule
-
-

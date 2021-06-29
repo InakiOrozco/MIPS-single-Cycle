@@ -40,8 +40,6 @@ module MIPS_Processor
 //******************************************************************/
 // Data types to connect modules
 
-wire branch_ne_w;
-wire branch_eq_w;
 wire reg_dst_w;
 wire not_zero_and_branch_ne_e;
 wire zero_and_branch_eq_W;
@@ -80,8 +78,6 @@ CONTROL_UNIT
 (
 	.opcode_i(instruction_w[31:26]),
 	.reg_dst_o(reg_dst_w),
-	.branch_ne_o(branch_ne_w),
-	.branch_eq_o(branch_eq_w),
 	.alu_op_o(alu_op_w),
 	.alu_src_o(alu_rc_w),
 	.reg_write_o(reg_write_w),
