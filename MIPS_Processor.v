@@ -47,6 +47,7 @@ wire or_for_branch_w;
 wire alu_rc_w;
 wire reg_write_w;
 wire jump_signal_w;
+wire jump_register_w;
 wire mem_write_w;
 wire mem_read_w;
 wire zero_w;
@@ -65,8 +66,6 @@ wire [31:0] inmmediate_extend_w;
 wire [31:0] read_ata_2_r_nmmediate_w;
 wire [31:0] alu_result_w;
 wire [31:0] pc_plus_4_w;
-wire [31:0] immediate_extended_w;
-wire [31:0] PCtoBranch_wire;
 
 //******************************************************************/
 //******************************************************************/
@@ -196,7 +195,7 @@ Multiplexer_2_to_1
 )
 MUX_ADDER_OR_JUMP
 (
-	.selector_i(jump_signal_w),
+	.selector_i(jump_signal_w | jump_register_w),
 	.data_0_i(pc_plus_4_w),
 	.data_1_i(jump_pc_w),
 	
@@ -210,7 +209,8 @@ ALU_CTRL
 (
 	.alu_op_i(alu_op_w),
 	.alu_function_i(instruction_w[5:0]),
-	.alu_operation_o(alu_operation_w)
+	.alu_operation_o(alu_operation_w),
+	.jump_register_o(jump_register_w)
 
 );
 

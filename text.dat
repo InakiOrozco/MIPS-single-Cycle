@@ -8,12 +8,11 @@ srl *
 R or *
 R and *
 I andi *
-R nor  *
+R nor *
 I lw
 I sw
-I beq
-I bne
-J j
+I beq*
+I bne*
+J j*
 J jal
 R jr
-

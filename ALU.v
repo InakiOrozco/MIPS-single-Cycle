@@ -48,7 +48,8 @@ localparam NOR = 5'b01100;
 localparam AND = 5'b01101;
 localparam JMP	 = 5'b01110;
 localparam JAL	 = 5'b01111;
-   
+localparam JR	 = 5'b10000;
+  
    always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i or pc_i or address_i)
      begin
 		case (alu_operation_i)
@@ -107,6 +108,9 @@ localparam JAL	 = 5'b01111;
 		  /*JAL:
 			ra
 			jump_pc_o = {pc_i[31:28], address_i, 2'b0};*/
+			
+		  JR:
+			jump_pc_o = a_i;
 
 		default:
 			alu_data_o = 0;

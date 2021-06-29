@@ -17,6 +17,7 @@ module ALU_Control
 	input [3:0] alu_op_i,
 	input [5:0] alu_function_i,
 	
+	output jump_register_o,
 	output [4:0] alu_operation_o
 
 );
@@ -39,9 +40,11 @@ localparam R_TYPE_NOR	 = 10'b1111_100111;
 localparam R_TYPE_AND	 = 10'b1111_100100;
 localparam J_TYPE_JMP	 = 10'b1000_xxxxxx;
 localparam J_TYPE_JAL	 = 10'b1001_xxxxxx;
+localparam R_TYPE_JR		 = 10'b1111_001000;
 
 
 reg [4:0] alu_control_values_r;
+reg jump_register_r = 1'b0;
 wire [9:0] selector_w;
 
 assign selector_w = {alu_op_i, alu_function_i};
@@ -67,6 +70,10 @@ always@(selector_w)begin
 		R_TYPE_AND:		alu_control_values_r = 5'b01101;
 		J_TYPE_JMP:		alu_control_values_r = 5'b01110;	
 		J_TYPE_JAL:		alu_control_values_r = 5'b01111;
+		R_TYPE_JR:     begin
+							jump_register_r = 1'b1;
+							alu_control_values_r = 5'b10000;
+							end
 		
 		default: alu_control_values_r = 5'b11111;
 	endcase
@@ -75,5 +82,6 @@ end
 
 
 assign alu_operation_o = alu_control_values_r;
+assign jump_register_o = jump_register_r;
 
 endmodule
