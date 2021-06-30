@@ -49,8 +49,8 @@ always@(opcode_i) begin
 		I_TYPE_ORI	: control_values_r = 11'b0_101_00_0_0001;
 		I_TYPE_LUI	: control_values_r = 11'b0_101_00_0_0010;
 		I_TYPE_ANDI : control_values_r = 11'b0_101_00_0_0011;
-		I_TYPE_LW 	: control_values_r = 11'b0_111_10_0_0100;
-		I_TYPE_SW 	: control_values_r = 11'b0_100_01_0_0101;
+		I_TYPE_LW 	: control_values_r = 11'b0_111_10_0_0000;
+		I_TYPE_SW 	: control_values_r = 11'b0_100_01_0_0000;
 		I_TYPE_BEQ  : control_values_r = 11'b0_000_00_1_0110;
 		I_TYPE_BNE	: control_values_r = 11'b0_000_00_1_0111;
 		J_TYPE_JMP	: control_values_r = 11'b0_000_00_1_1000;

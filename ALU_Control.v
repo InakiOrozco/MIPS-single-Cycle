@@ -65,9 +65,9 @@ always@(selector_w)begin
 		R_TYPE_SLL: 	alu_control_values_r = 5'b00101;
 		I_TYPE_LUI: 	alu_control_values_r = 5'b00110;
 		I_TYPE_ANDI: 	alu_control_values_r = 5'b00111;
-		I_TYPE_LW: 		alu_control_values_r = 5'b01000;
+/*		I_TYPE_LW: 		alu_control_values_r = 5'b01000;
 		I_TYPE_SW: 		alu_control_values_r = 5'b01001;
-		I_TYPE_BEQ: 	alu_control_values_r = 5'b01010;
+	 */I_TYPE_BEQ: 	alu_control_values_r = 5'b01010;
 		I_TYPE_BNE: 	alu_control_values_r = 5'b01011;
 		R_TYPE_NOR:		alu_control_values_r = 5'b01100;
 		R_TYPE_AND:		alu_control_values_r = 5'b01101;

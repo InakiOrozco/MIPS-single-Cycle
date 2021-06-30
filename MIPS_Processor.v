@@ -49,6 +49,7 @@ wire reg_write_w;
 wire jump_signal_w;
 wire jump_register_w;
 wire return_address_w;
+wire mem_to_reg_w;
 wire mem_write_w;
 wire mem_read_w;
 wire zero_w;
@@ -68,6 +69,7 @@ wire [31:0] inmmediate_extend_w;
 wire [31:0] read_ata_2_r_nmmediate_w;
 wire [31:0] alu_result_w;
 wire [31:0] pc_plus_4_w;
+wire [31:0] write_data_w;
 
 //******************************************************************/
 //******************************************************************/
@@ -84,7 +86,8 @@ CONTROL_UNIT
 	.reg_write_o(reg_write_w),
 	.jump_signal_o(jump_signal_w),
 	.mem_write_o(mem_write_w),
-	.mem_read_o(mem_read_w)
+	.mem_read_o(mem_read_w),
+	.mem_to_reg_o(mem_to_reg_w)
 );
 
 Program_Counter
@@ -132,6 +135,19 @@ PC_Puls_4
 	.result_o(pc_plus_4_w)
 );
 
+Multiplexer_2_to_1
+#(
+	.N_BITS(32)
+)
+MUX_ALU_RESULT_OR_MEM_DATA
+(
+	.selector_i(mem_to_reg_w),
+	.data_0_i(alu_result_w),
+	.data_1_i(data_ram_w),
+	
+	.mux_o(write_data_w)
+);
+
 
 //******************************************************************/
 //******************************************************************/
@@ -176,7 +192,7 @@ REGISTER_FILE_UNIT
 	.write_register_i(write_register_w),
 	.read_register_1_i(instruction_w[25:21]), //rs
 	.read_register_2_i(instruction_w[20:16]), //rt
-	.write_data_i(alu_result_w),
+	.write_data_i(write_data_w),
 	.read_data_1_o(read_data_1_w),
 	.read_data_2_o(read_data_2_w)
 
