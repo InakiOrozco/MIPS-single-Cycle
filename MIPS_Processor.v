@@ -27,7 +27,7 @@
 
 module MIPS_Processor
 #(
-	parameter MEMORY_DEPTH = 32
+	parameter MEMORY_DEPTH = 64
 )
 (
 	// Inputs
@@ -57,7 +57,7 @@ wire [3:0] alu_op_w;
 wire [4:0] alu_operation_w;
 wire [4:0] r_or_i_w;
 wire [4:0] write_register_w;
-wire [7:0] data_ram_w;
+wire [31:0] data_ram_w;
 wire [31:0] mux_pc_w;
 wire [31:0] pc_w;
 wire [31:0] jump_pc_w;
@@ -68,6 +68,8 @@ wire [31:0] read_data_2_w;
 wire [31:0] inmmediate_extend_w;
 wire [31:0] read_ata_2_r_nmmediate_w;
 wire [31:0] alu_result_w;
+wire [31:0] address_sub_w;
+wire [31:0] address_w;
 wire [31:0] pc_plus_4_w;
 wire [31:0] write_data_w;
 
@@ -108,7 +110,7 @@ RAM
 (
 	.clk(clk),
 	.write_data_i(read_data_2_w),
-	.address_i(alu_result_w-32'h10010000),
+	.address_i(address_w),
 	.mem_write_i(mem_write_w),
 	.mem_read_i(mem_read_w),
 	.data_o(data_ram_w)
@@ -121,10 +123,9 @@ Program_Memory
 )
 ROM
 (
-	.address_i(pc_w-32'h400000),
+	.address_i(pc_w),
 	.instruction_o(instruction_w)
 );
-
 
 Adder
 PC_Puls_4
@@ -135,6 +136,8 @@ PC_Puls_4
 	.result_o(pc_plus_4_w)
 );
 
+
+//Salida de la ALU o memoria al registro
 Multiplexer_2_to_1
 #(
 	.N_BITS(32)
@@ -148,6 +151,19 @@ MUX_ALU_RESULT_OR_MEM_DATA
 	.mux_o(write_data_w)
 );
 
+Restador
+Resta
+(
+	.data_i(alu_result_w),
+	.result_o(address_sub_w)
+);
+
+Shift_Right_2
+Shifter_R
+(
+	.data_i(address_sub_w),
+	.data_o(address_w)
+);
 
 //******************************************************************/
 //******************************************************************/

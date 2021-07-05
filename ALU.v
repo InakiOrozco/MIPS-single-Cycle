@@ -52,6 +52,8 @@ localparam JR	 = 5'b10000;
   
    always @ (a_i or b_i or alu_operation_i or shamt_i or imm_i or pc_i or address_i)
      begin
+	  	alu_data_o = 0;
+		jump_pc_o = 0;
 		case (alu_operation_i)
 		
 		  ADD: // add

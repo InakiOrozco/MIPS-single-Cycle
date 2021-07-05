@@ -19,6 +19,8 @@
 .data
 .text
 main:
+	lui $sp, 0x1001
+	addi $sp, $sp, 1020
 	addi $s0, $zero, 3 #Cantidad de discos (n) 
 	addi $s1, $zero, 480 #Para poder guardar los discos hasta la última fila tenemos que sumarle 480
 	add $s2, $zero, $s0 #Copiamos la cantidad para manipularla
