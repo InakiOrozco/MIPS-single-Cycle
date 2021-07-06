@@ -97,11 +97,11 @@ wire [4:0] EX_r_or_i_w;
 wire MEM_jump_signal_w;
 wire MEM_mem_write_w;
 wire MEM_mem_read_w;
-wire [31:0] MEM_read_data_2_w;
 wire MEM_jump_register_w;
+wire [4:0] MEM_r_or_i_w;
+wire [31:0] MEM_read_data_2_w;
 wire [31:0] MEM_alu_result_w;
 wire [31:0] MEM_pc_plus_4_w;
-wire [4:0] MEM_r_or_i_w;
 wire [31:0] MEM_jump_pc_w;
 
 //MEM/WB
@@ -146,7 +146,7 @@ ID_EX_PIPELINE
 	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], ID_instruction_w[10:6], 
 	r_or_i_w}),
 	.dataOut({EX_reg_dst_w, EX_alu_op_w, EX_alu_rc_w, EX_pc_plus_4_w, EX_read_data_1_w, EX_read_data_2_w, 
-	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w})
+	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w, EX_r_or_i_w})
 );
 
 //EX/MEM
@@ -160,7 +160,7 @@ EX_MEM_PIPELINE
 	.clk(clk),
 	.reset(reset),
 	.dataIn({jump_signal_w, mem_write_w, mem_read_w, EX_read_data_2_w, jump_register_w, alu_result_w, EX_pc_plus_4_w, 
-	reg_write_w, EX_r_or_i_w, jump_pc_w}),
+	EX_r_or_i_w, jump_pc_w}),
 	.dataOut({MEM_jump_signal_w, MEM_mem_write_w, MEM_mem_read_w, MEM_read_data_2_w, MEM_jump_register_w, 
 	MEM_alu_result_w, MEM_pc_plus_4_w, MEM_r_or_i_w, MEM_jump_pc_w})
 );
@@ -356,7 +356,7 @@ Multiplexer_2_to_1
 MUX_ADDER_OR_JUMP
 (
 	.selector_i(MEM_jump_signal_w | MEM_jump_register_w),
-	.data_0_i(MEM_pc_plus_4_w), //puede que deba recibir el pc_plus_4_w directo
+	.data_0_i(pc_plus_4_w), //puede que deba recibir el pc_plus_4_w directo
 	.data_1_i(MEM_jump_pc_w),
 	
 	.mux_o(program_counter_w)
