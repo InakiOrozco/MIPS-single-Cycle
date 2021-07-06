@@ -63,9 +63,9 @@ wire [31:0] pc_w;
 wire [31:0] jump_pc_w;
 wire [31:0] program_counter_w;
 wire [31:0] instruction_w;
-//wire [31:0] read_data_1_w;
-//wire [31:0] read_data_2_w;
-//wire [31:0] inmmediate_extend_w;
+wire [31:0] read_data_1_w;
+wire [31:0] read_data_2_w;
+wire [31:0] inmmediate_extend_w;
 wire [31:0] read_ata_2_r_nmmediate_w;
 wire [31:0] alu_result_w;
 wire [31:0] address_sub_w;
@@ -77,11 +77,8 @@ wire [31:0] write_data_w;
 //IF/ID
 wire [31:0] ID_pc_plus_4_w;
 wire [31:0] ID_instruction_w;
-wire [31:0] ID_inmmediate_extend_w;
-wire [31:0] ID_read_data_1_w;
-wire [31:0] ID_read_data_2_w;
 
-//EX
+//ID/EX
 wire [31:0] EX_pc_plus_4_w;
 wire [31:0] EX_read_data_1_w;
 wire [31:0] EX_read_data_2_w;
@@ -94,14 +91,31 @@ wire [5:0] EX_shamt_w;
 wire EX_reg_dst_w;
 wire EX_alu_op_w;
 wire EX_alu_rc_w;
-//******************************************************************/
-//******************************************************************/
-//******************************************************************/
-//******************************************************************/
-//******************************************************************/
+wire [4:0] EX_r_or_i_w;
 
-//IF
+//EX/MEM
+wire MEM_jump_signal_w;
+wire MEM_mem_write_w;
+wire MEM_mem_read_w;
+wire [31:0] MEM_read_data_2_w;
+wire MEM_jump_register_w;
+wire [31:0] MEM_alu_result_w;
+wire [31:0] MEM_pc_plus_4_w;
+wire [4:0] MEM_r_or_i_w;
+wire [31:0] MEM_jump_pc_w;
 
+//MEM/WB
+wire WB_reg_write_w;
+wire WB_mem_to_reg_w;
+wire [31:0] WB_alu_result_w;
+wire [31:0] WB_data_ram_w;
+wire [4:0] WB_write_register_w;
+
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
 
 //IF/ID
 Pipeline_Register
@@ -122,30 +136,47 @@ IF_ID_PIPELINE
 Pipeline_Register
 #
 (
-//2 outputs = 32 bits * 2
-	.N_BITS(64)
+	.N_BITS(196)
 )
-IF_ID_PIPELINE
+ID_EX_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
-	.dataIn({reg_dst_w, alu_op_w, alu_rc_w, ID_pc_plus_4_w, ID_read_data_1_w, ID_read_data_2_w, ID_inmmediate_extend_w, ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], instruction_w[15:0], instruction_w[10:6]}),
-	.dataOut({EX_reg_dst_w, EX_alu_op_w, EX_alu_rc_w, EX_pc_plus_4_w, EX_read_data_1_w, EX_read_data_2_w, EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w})
+	.dataIn({reg_dst_w, alu_op_w, alu_rc_w, ID_pc_plus_4_w, read_data_1_w, read_data_2_w, inmmediate_extend_w, 
+	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], ID_instruction_w[10:6], 
+	r_or_i_w}),
+	.dataOut({EX_reg_dst_w, EX_alu_op_w, EX_alu_rc_w, EX_pc_plus_4_w, EX_read_data_1_w, EX_read_data_2_w, 
+	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w})
 );
 
 //EX/MEM
 Pipeline_Register
 #
 (
-//2 outputs = 32 bits * 2
-	.N_BITS(64)
+	.N_BITS(137)
 )
-IF_ID_PIPELINE
+EX_MEM_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
-	.dataIn({}),
-	.dataOut({})
+	.dataIn({jump_signal_w, mem_write_w, mem_read_w, EX_read_data_2_w, jump_register_w, alu_result_w, EX_pc_plus_4_w, 
+	reg_write_w, EX_r_or_i_w, jump_pc_w}),
+	.dataOut({MEM_jump_signal_w, MEM_mem_write_w, MEM_mem_read_w, MEM_read_data_2_w, MEM_jump_register_w, 
+	MEM_alu_result_w, MEM_pc_plus_4_w, MEM_r_or_i_w, MEM_jump_pc_w})
+);
+
+//MEM/WB
+Pipeline_Register
+#
+(
+	.N_BITS(71)
+)
+MEM_WB_PIPELINE
+(
+	.clk(clk),
+	.reset(reset),
+	.dataIn({reg_write_w, mem_to_reg_w, MEM_alu_result_w, data_ram_w, MEM_r_or_i_w}),
+	.dataOut({WB_reg_write_w, WB_mem_to_reg_w , WB_alu_result_w, WB_data_ram_w, WB_write_register_w})
 );
 
 //ID
@@ -183,9 +214,9 @@ RAM
 	.clk(clk),
 	.write_data_i(MEM_read_data_2_w),
 	.address_i(address_w),
-	.mem_write_i(mem_write_w),
-	.mem_read_i(mem_read_w),
-	.data_o(data_ram_w)
+	.mem_write_i(MEM_mem_write_w), 
+	.mem_read_i(MEM_mem_read_w), 
+	.data_o(data_ram_w) //WB
 );
 
 //IF
@@ -288,8 +319,8 @@ REGISTER_FILE_UNIT
 	.read_register_1_i(ID_instruction_w[25:21]), //rs
 	.read_register_2_i(ID_instruction_w[20:16]), //rt
 	.write_data_i(write_data_w),
-	.read_data_1_o(ID_read_data_1_w),
-	.read_data_2_o(ID_read_data_2_w)
+	.read_data_1_o(read_data_1_w),
+	.read_data_2_o(read_data_2_w)
 
 );
 
@@ -298,7 +329,7 @@ Sign_Extend
 SIGNED_EXTEND_FOR_CONSTANTS
 (   
 	.data_i(ID_instruction_w[15:0]),
-   .sign_extend_o(ID_inmmediate_extend_w)
+   .sign_extend_o(inmmediate_extend_w)
 );
 
 //EX
@@ -325,7 +356,7 @@ Multiplexer_2_to_1
 MUX_ADDER_OR_JUMP
 (
 	.selector_i(MEM_jump_signal_w | MEM_jump_register_w),
-	.data_0_i(pc_plus_4_w),
+	.data_0_i(MEM_pc_plus_4_w), //puede que deba recibir el pc_plus_4_w directo
 	.data_1_i(MEM_jump_pc_w),
 	
 	.mux_o(program_counter_w)
