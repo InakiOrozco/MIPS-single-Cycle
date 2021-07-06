@@ -79,19 +79,18 @@ wire [31:0] ID_pc_plus_4_w;
 wire [31:0] ID_instruction_w;
 
 //ID/EX
+wire EX_reg_dst_w;
+wire EX_alu_rc_w;
+wire [3:0] EX_alu_op_w;
+wire [4:0] EX_instruction_R_w;
+wire [4:0] EX_instruction_I_w;
+wire [4:0] EX_shamt_w;
+wire [15:0] EX_imm_w;
+wire [25:0] EX_adress_w;
 wire [31:0] EX_pc_plus_4_w;
 wire [31:0] EX_read_data_1_w;
 wire [31:0] EX_read_data_2_w;
 wire [31:0] EX_inmmediate_extend_w;
-wire [5:0] EX_instruction_R_w;
-wire [5:0] EX_instruction_I_w;
-wire [25:0] EX_adress_w;
-wire [15:0] EX_imm_w;
-wire [5:0] EX_shamt_w;
-wire EX_reg_dst_w;
-wire EX_alu_op_w;
-wire EX_alu_rc_w;
-wire [4:0] EX_r_or_i_w;
 
 //EX/MEM
 wire MEM_jump_signal_w;
@@ -136,17 +135,16 @@ IF_ID_PIPELINE
 Pipeline_Register
 #
 (
-	.N_BITS(196)
+	.N_BITS(191)
 )
 ID_EX_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
 	.dataIn({reg_dst_w, alu_op_w, alu_rc_w, ID_pc_plus_4_w, read_data_1_w, read_data_2_w, inmmediate_extend_w, 
-	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], ID_instruction_w[10:6], 
-	r_or_i_w}),
+	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], ID_instruction_w[10:6]	}),
 	.dataOut({EX_reg_dst_w, EX_alu_op_w, EX_alu_rc_w, EX_pc_plus_4_w, EX_read_data_1_w, EX_read_data_2_w, 
-	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w, EX_r_or_i_w})
+	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w})
 );
 
 //EX/MEM
@@ -160,7 +158,7 @@ EX_MEM_PIPELINE
 	.clk(clk),
 	.reset(reset),
 	.dataIn({jump_signal_w, mem_write_w, mem_read_w, EX_read_data_2_w, jump_register_w, alu_result_w, EX_pc_plus_4_w, 
-	EX_r_or_i_w, jump_pc_w}),
+	r_or_i_w, jump_pc_w}),
 	.dataOut({MEM_jump_signal_w, MEM_mem_write_w, MEM_mem_read_w, MEM_read_data_2_w, MEM_jump_register_w, 
 	MEM_alu_result_w, MEM_pc_plus_4_w, MEM_r_or_i_w, MEM_jump_pc_w})
 );
@@ -178,6 +176,12 @@ MEM_WB_PIPELINE
 	.dataIn({reg_write_w, mem_to_reg_w, MEM_alu_result_w, data_ram_w, MEM_r_or_i_w}),
 	.dataOut({WB_reg_write_w, WB_mem_to_reg_w , WB_alu_result_w, WB_data_ram_w, WB_write_register_w})
 );
+
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
+//******************************************************************/
 
 //ID
 Control
