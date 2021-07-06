@@ -74,6 +74,7 @@ wire [31:0] pc_plus_4_w;
 wire [31:0] write_data_w;
 
 //nuevos wires del pipeline
+//IF/ID
 wire [31:0] ID_pc_plus_4_w;
 wire [31:0] ID_instruction_w;
 
@@ -83,7 +84,16 @@ wire [31:0] ID_instruction_w;
 //******************************************************************/
 //******************************************************************/
 
+//IF
+
+
+//IF/ID
 Pipeline_Register
+#
+(
+//2 outputs = 32 bits * 2
+	.N_BITS(64)
+)
 IF_ID_PIPELINE
 (
 	.clk(clk),
@@ -92,20 +102,22 @@ IF_ID_PIPELINE
 	.dataOut({ID_pc_plus_4_w,ID_instruction_w})
 );
 
+//ID
 Control
 CONTROL_UNIT
 (
-	.opcode_i(instruction_w[31:26]),
-	.reg_dst_o(reg_dst_w),
-	.alu_op_o(alu_op_w),
-	.alu_src_o(alu_rc_w),
-	.reg_write_o(reg_write_w),
-	.jump_signal_o(jump_signal_w),
-	.mem_write_o(mem_write_w),
-	.mem_read_o(mem_read_w),
-	.mem_to_reg_o(mem_to_reg_w)
+	.opcode_i(ID_instruction_w[31:26]),
+	.reg_dst_o(reg_dst_w), //EX
+	.alu_op_o(alu_op_w), //EX
+	.alu_src_o(alu_rc_w), //EX
+	.reg_write_o(reg_write_w), //va a WB
+	.jump_signal_o(jump_signal_w), //M
+	.mem_write_o(mem_write_w), //M
+	.mem_read_o(mem_read_w), //M
+	.mem_to_reg_o(mem_to_reg_w) //WB
 );
 
+//IF
 Program_Counter
 PC
 (
@@ -115,7 +127,7 @@ PC
 	.pc_value_o(pc_w)
 );
 
-//RAM
+//MEM
 Data_Memory
 #( .DATA_WIDTH(32),
 	.MEMORY_DEPTH(256)
@@ -130,7 +142,7 @@ RAM
 	.data_o(data_ram_w)
 );
 
-//ROM
+//IF
 Program_Memory
 #(
 	.MEMORY_DEPTH(MEMORY_DEPTH)
@@ -141,6 +153,7 @@ ROM
 	.instruction_o(instruction_w)
 );
 
+//IF
 Adder
 PC_Puls_4
 (
@@ -165,6 +178,7 @@ MUX_ALU_RESULT_OR_MEM_DATA
 	.mux_o(write_data_w)
 );
 
+//MEM
 Restador
 Resta
 (
@@ -185,6 +199,7 @@ Shifter_R
 //******************************************************************/
 //******************************************************************/
 
+//EX
 Multiplexer_2_to_1
 #(
 	.N_BITS(5)
@@ -192,13 +207,16 @@ Multiplexer_2_to_1
 MUX_R_TYPE_OR_I_Type
 (
 	.selector_i(reg_dst_w),
-	.data_0_i(instruction_w[20:16]),
-	.data_1_i(instruction_w[15:11]),
+	//Se debe cambiar esta instruccion por lo que salga del EX
+	.data_0_i(ID_instruction_w[20:16]),
+	.data_1_i(ID_instruction_w[15:11]),
 	
 	.mux_o(r_or_i_w)
 
 );
 
+
+//Este mux debe ir en EX
 Multiplexer_2_to_1
 #(
 	.N_BITS(5)
@@ -213,6 +231,7 @@ MUX_REG_OR_RA
 
 );
 
+//ID
 Register_File
 REGISTER_FILE_UNIT
 (
@@ -220,22 +239,23 @@ REGISTER_FILE_UNIT
 	.reset(reset),
 	.reg_write_i(reg_write_w),
 	.write_register_i(write_register_w),
-	.read_register_1_i(instruction_w[25:21]), //rs
-	.read_register_2_i(instruction_w[20:16]), //rt
+	.read_register_1_i(ID_instruction_w[25:21]), //rs
+	.read_register_2_i(ID_instruction_w[20:16]), //rt
 	.write_data_i(write_data_w),
 	.read_data_1_o(read_data_1_w),
 	.read_data_2_o(read_data_2_w)
 
 );
 
+//ID
 Sign_Extend
 SIGNED_EXTEND_FOR_CONSTANTS
 (   
-	.data_i(instruction_w[15:0]),
+	.data_i(ID_instruction_w[15:0]),
    .sign_extend_o(inmmediate_extend_w)
 );
 
-
+//EX
 Multiplexer_2_to_1
 #(
 	.N_BITS(32)
@@ -251,7 +271,7 @@ MUX_READ_DATA_2_OR_IMMEDIATE
 );
 
 
-//Mux que va antes del PC
+//Mux que va antes del PC (IF)
 Multiplexer_2_to_1
 #(
 	.N_BITS(32)

@@ -1,5 +1,8 @@
 .text 
 #agregar 3 instrucciones nop
+add $zero, $zero, $zero
+add $zero, $zero, $zero
+add $zero, $zero, $zero
 lui $s0, 0x00000101
 ori $s1, $s0, 0x24
 addi $s2, $zero, 1
