@@ -73,11 +73,25 @@ wire [31:0] address_w;
 wire [31:0] pc_plus_4_w;
 wire [31:0] write_data_w;
 
+//nuevos wires del pipeline
+wire [31:0] ID_pc_plus_4_w;
+wire [31:0] ID_instruction_w;
+
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
+
+Pipeline_Register
+IF_ID_PIPELINE
+(
+	.clk(clk),
+	.reset(reset),
+	.dataIn({pc_plus_4_w,instruction_w}),
+	.dataOut({ID_pc_plus_4_w,ID_instruction_w})
+);
+
 Control
 CONTROL_UNIT
 (
@@ -237,6 +251,7 @@ MUX_READ_DATA_2_OR_IMMEDIATE
 );
 
 
+//Mux que va antes del PC
 Multiplexer_2_to_1
 #(
 	.N_BITS(32)
