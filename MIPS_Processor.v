@@ -85,9 +85,12 @@ wire EX_reg_write_w;
 wire EX_mem_write_w;
 wire EX_mem_read_w;
 wire EX_mem_to_reg_w;
+wire EX_jump_signal_w;
 wire [3:0] EX_alu_op_w;
 wire [4:0] EX_instruction_R_w;
 wire [4:0] EX_instruction_I_w;
+wire [4:0] EX_Rs;
+wire [4:0] EX_Rt;
 wire [4:0] EX_shamt_w;
 wire [15:0] EX_imm_w;
 wire [25:0] EX_adress_w;
@@ -116,6 +119,12 @@ wire [31:0] WB_alu_result_w;
 wire [31:0] WB_data_ram_w;
 wire [4:0] WB_write_register_w;
 
+//Forwarding Unit
+wire [1:0] forward_A_w;
+wire [1:0] forward_B_w;
+wire [31:0] Mux_1_w;
+wire [31:0] Mux_2_w;
+
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
@@ -141,7 +150,7 @@ IF_ID_PIPELINE
 Pipeline_Register
 #
 (
-	.N_BITS(196)
+	.N_BITS(206)
 )
 ID_EX_PIPELINE
 (
@@ -149,10 +158,10 @@ ID_EX_PIPELINE
 	.reset(reset),
 	.dataIn({reg_dst_w, alu_op_w, alu_rc_w, ID_pc_plus_4_w, read_data_1_w, read_data_2_w, inmmediate_extend_w, 
 	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], 
-	ID_instruction_w[10:6], reg_write_w, jump_signal_w, mem_write_w, mem_read_w, mem_to_reg_w}),
+	ID_instruction_w[10:6], reg_write_w, jump_signal_w, mem_write_w, mem_read_w, mem_to_reg_w, ID_instruction_w[25:21], ID_instruction_w[20:16]}),
 	.dataOut({EX_reg_dst_w, EX_alu_op_w, EX_alu_rc_w, EX_pc_plus_4_w, EX_read_data_1_w, EX_read_data_2_w, 
 	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w,
-	EX_reg_write_w, EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, EX_mem_to_reg_w})
+	EX_reg_write_w, EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, EX_mem_to_reg_w, EX_Rs, EX_Rt})
 );
 
 //EX/MEM
@@ -165,7 +174,9 @@ EX_MEM_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
-	.dataIn({EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, EX_read_data_2_w, jump_register_w, alu_result_w, EX_pc_plus_4_w, 
+	.dataIn({EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, 
+	Mux_2_w, //se cambia el EX_read_data_2_w por el resultado del segundo mux.
+	jump_register_w, alu_result_w, EX_pc_plus_4_w, 
 	r_or_i_w, jump_pc_w, EX_reg_write_w, EX_mem_to_reg_w}),
 	.dataOut({MEM_jump_signal_w, MEM_mem_write_w, MEM_mem_read_w, MEM_read_data_2_w, MEM_jump_register_w, 
 	MEM_alu_result_w, MEM_pc_plus_4_w, MEM_r_or_i_w, MEM_jump_pc_w, MEM_reg_write_w, MEM_mem_to_reg_w})
@@ -183,6 +194,49 @@ MEM_WB_PIPELINE
 	.reset(reset),
 	.dataIn({MEM_reg_write_w, MEM_mem_to_reg_w, MEM_alu_result_w, data_ram_w, MEM_r_or_i_w}),
 	.dataOut({WB_reg_write_w, WB_mem_to_reg_w , WB_alu_result_w, WB_data_ram_w, WB_write_register_w})
+);
+
+Forwarding_Unit
+Forwarding_Unit
+(
+	//Control
+	.MEM_reg_write(MEM_reg_write_w), 
+	.WB_reg_write(WB_reg_write_w),
+	
+	.MEM_reg_rd(MEM_r_or_i_w),
+	.WB_reg_rd(WB_write_register_w),
+	.EX_reg_rs(EX_Rs),
+	.EX_reg_rt(EX_Rt),
+	.forward_A(forward_A_w),
+	.forward_B(forward_B_w)
+);
+
+Multiplexer_3_to_1
+#(
+	.N_BITS(32)
+)
+MUX_ALU_TOP
+(
+	.selector_i(forward_A_w),
+	.data_0_i(EX_read_data_1_w),
+	.data_1_i(write_data_w),
+	.data_2_i(MEM_alu_result_w),
+	
+	.mux_o(Mux_1_w)
+);
+
+Multiplexer_3_to_1
+#(
+	.N_BITS(32)
+)
+MUX_ALU_BOT
+(
+	.selector_i(forward_B_w),
+	.data_0_i(EX_read_data_2_w),
+	.data_1_i(write_data_w),
+	.data_2_i(MEM_alu_result_w),
+	
+	.mux_o(Mux_2_w)
 );
 
 //******************************************************************/
@@ -352,7 +406,7 @@ Multiplexer_2_to_1
 MUX_READ_DATA_2_OR_IMMEDIATE
 (
 	.selector_i(EX_alu_rc_w),
-	.data_0_i(EX_read_data_2_w),
+	.data_0_i(Mux_2_w), //se agrega el mux 3 a 1
 	.data_1_i(EX_inmmediate_extend_w),
 	
 	.mux_o(read_ata_2_r_nmmediate_w)
@@ -393,7 +447,7 @@ ALU
 ALU_UNIT
 (
 	.alu_operation_i(alu_operation_w),
-	.a_i(EX_read_data_1_w),
+	.a_i(Mux_1_w), //se agrega el mux 3 a 1
 	.b_i(read_ata_2_r_nmmediate_w),
 	.zero_o(zero_w),
 	.shamt_i(EX_shamt_w),
