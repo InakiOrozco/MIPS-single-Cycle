@@ -5,7 +5,6 @@ module Hazard_Unit
 	input [4:0] ID_reg_rt_i,
 	input [4:0] EX_reg_rt_i,
 	/*
-	input MEM_branch_i,
 	input MEM_jump_i,
 	input MEM_jr_i,
 		
@@ -27,8 +26,8 @@ module Hazard_Unit
 			IF_ID_write_o = 1'b1;
 			stall_o = 1'b1;
 		end
-		/*
-		if (MEM_jump_i || MEM_jr_i || MEM_branch_i)begin
+/*
+		if (MEM_jump_i || MEM_jr_i)begin
 			IF_ID_flush_o = 1'b1;
 			ID_EX_flush_o = 1'b1;
 			EX_MEM_flush_o = 1'b1;

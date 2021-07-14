@@ -148,6 +148,8 @@ IF_ID_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
+	.enable(IF_ID_write_w),
+	.flush(1'b0),
 	.dataIn({pc_plus_4_w,instruction_w}),
 	.dataOut({ID_pc_plus_4_w,ID_instruction_w})
 );
@@ -162,6 +164,8 @@ ID_EX_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
+	.enable(1'b0),
+	.flush(1'b0),
 	.dataIn({control_w[10], control_w[9:6], control_w[5], ID_pc_plus_4_w, read_data_1_w, read_data_2_w, inmmediate_extend_w, 
 	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], 
 	ID_instruction_w[10:6], control_w[4], control_w[3], control_w[2], control_w[1], control_w[0], ID_instruction_w[25:21], ID_instruction_w[20:16]}),
@@ -180,6 +184,8 @@ EX_MEM_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
+	.enable(1'b0),
+	.flush(1'b0),
 	.dataIn({EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, 
 	Mux_2_w, //se cambia el EX_read_data_2_w por el resultado del segundo mux.
 	jump_register_w, alu_result_w, EX_pc_plus_4_w, 
@@ -198,6 +204,8 @@ MEM_WB_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
+	.enable(1'b0),
+	.flush(1'b0),
 	.dataIn({MEM_reg_write_w, MEM_mem_to_reg_w, MEM_alu_result_w, data_ram_w, MEM_r_or_i_w}),
 	.dataOut({WB_reg_write_w, WB_mem_to_reg_w , WB_alu_result_w, WB_data_ram_w, WB_write_register_w})
 );
@@ -306,6 +314,7 @@ PC
 (
 	.clk(clk),
 	.reset(reset),
+	.pc_write_i(pc_write_w),
 	.new_pc_i(program_counter_w),
 	.pc_value_o(pc_w)
 );

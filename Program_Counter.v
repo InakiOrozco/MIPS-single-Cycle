@@ -19,6 +19,7 @@ module Program_Counter
 (
 	input clk,
 	input reset,
+	input pc_write_i,
 	input  [N_BITS-1:0] new_pc_i,
 	
 	output reg [N_BITS-1:0] pc_value_o
@@ -28,8 +29,10 @@ module Program_Counter
 always@(negedge reset or negedge clk) begin
 	if(reset==0)
 		pc_value_o <= 32'h00400000;
-	else	
-		pc_value_o<=new_pc_i;
+	else	begin
+		if(pc_write_i == 0)
+			pc_value_o<=new_pc_i;
+	end
 end
 
 endmodule
