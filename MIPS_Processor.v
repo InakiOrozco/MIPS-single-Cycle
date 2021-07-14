@@ -125,6 +125,12 @@ wire [1:0] forward_B_w;
 wire [31:0] Mux_1_w;
 wire [31:0] Mux_2_w;
 
+//Hazard unit
+wire pc_write_w;
+wire IF_ID_write_w;
+wire stall_w;
+wire [10:0]control_w;
+
 //******************************************************************/
 //******************************************************************/
 //******************************************************************/
@@ -156,9 +162,9 @@ ID_EX_PIPELINE
 (
 	.clk(clk),
 	.reset(reset),
-	.dataIn({reg_dst_w, alu_op_w, alu_rc_w, ID_pc_plus_4_w, read_data_1_w, read_data_2_w, inmmediate_extend_w, 
+	.dataIn({control_w[10], control_w[9:6], control_w[5], ID_pc_plus_4_w, read_data_1_w, read_data_2_w, inmmediate_extend_w, 
 	ID_instruction_w[20:16], ID_instruction_w[15:11], ID_instruction_w[25:0], ID_instruction_w[15:0], 
-	ID_instruction_w[10:6], reg_write_w, jump_signal_w, mem_write_w, mem_read_w, mem_to_reg_w, ID_instruction_w[25:21], ID_instruction_w[20:16]}),
+	ID_instruction_w[10:6], control_w[4], control_w[3], control_w[2], control_w[1], control_w[0], ID_instruction_w[25:21], ID_instruction_w[20:16]}),
 	.dataOut({EX_reg_dst_w, EX_alu_op_w, EX_alu_rc_w, EX_pc_plus_4_w, EX_read_data_1_w, EX_read_data_2_w, 
 	EX_inmmediate_extend_w, EX_instruction_R_w, EX_instruction_I_w, EX_adress_w, EX_imm_w, EX_shamt_w,
 	EX_reg_write_w, EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, EX_mem_to_reg_w, EX_Rs, EX_Rt})
@@ -237,6 +243,40 @@ MUX_ALU_BOT
 	.data_2_i(MEM_alu_result_w),
 	
 	.mux_o(Mux_2_w)
+);
+
+Hazard_Unit
+Hazard_Unit
+(
+	.EX_mem_read_i(EX_mem_read_w), 
+	.ID_reg_rs_i(ID_instruction_w[25:21]),
+	.ID_reg_rt_i(ID_instruction_w[20:16]),
+	.EX_reg_rt_i(EX_instruction_R_w),
+	/*
+	.MEM_branch_i(),
+	.MEM_jump_i(),
+	.MEM_jr_i(),
+	
+	.IF_ID_flush_o(),
+	.ID_EX_flush_o(),
+	.EX_MEM_flush_o()
+	*/
+	.pc_write_o(pc_write_w),
+	.IF_ID_write_o(IF_ID_write_w),
+	.stall_o(stall_w)
+);
+
+Multiplexer_2_to_1
+#(
+	.N_BITS(11)
+)
+MUX_CONTROL
+(
+	.selector_i(stall_w),
+	.data_0_i({reg_dst_w, alu_op_w, alu_rc_w, reg_write_w, jump_signal_w, mem_write_w, mem_read_w, mem_to_reg_w}),
+	.data_1_i(11'b00000000000),
+	
+	.mux_o(control_w)
 );
 
 //******************************************************************/
