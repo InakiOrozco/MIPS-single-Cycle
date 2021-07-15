@@ -191,7 +191,7 @@ EX_MEM_PIPELINE
 	.dataIn({EX_jump_signal_w, EX_mem_write_w, EX_mem_read_w, 
 	Mux_2_w, //se cambia el EX_read_data_2_w por el resultado del segundo mux.
 	jump_register_w, alu_result_w, EX_pc_plus_4_w, 
-	r_or_i_w, jump_pc_w, EX_reg_write_w, EX_mem_to_reg_w}),
+	write_register_w, jump_pc_w, EX_reg_write_w, EX_mem_to_reg_w}),
 	.dataOut({MEM_jump_signal_w, MEM_mem_write_w, MEM_mem_read_w, MEM_read_data_2_w, MEM_jump_register_w, 
 	MEM_alu_result_w, MEM_pc_plus_4_w, MEM_r_or_i_w, MEM_jump_pc_w, MEM_reg_write_w, MEM_mem_to_reg_w})
 );
