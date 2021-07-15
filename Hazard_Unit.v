@@ -17,7 +17,7 @@ module Hazard_Unit
 	output reg stall_o
 );
 
-	always @ (EX_mem_read_i or EX_reg_rt_i or ID_reg_rt_i or ID_reg_rs_i or MEM_jump_i or MEM_jr_i)begin
+	always @ (EX_mem_read_i or EX_reg_rt_i or ID_reg_rt_i or ID_reg_rs_i or MEM_jump_i or MEM_jr_i )begin
 		pc_write_o = 1'b0;
 		IF_ID_write_o = 1'b0;
 		stall_o = 1'b0;
