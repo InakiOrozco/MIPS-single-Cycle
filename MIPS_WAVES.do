@@ -13,7 +13,7 @@ add wave -noupdate -expand -group REGISTER -radix unsigned /MIPS_Processor_TB/DU
 add wave -noupdate -expand -group REGISTER -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/write_data_i
 add wave -noupdate -expand -group REGISTER /MIPS_Processor_TB/DUV/ALU_UNIT/shamt_i
 add wave -noupdate -expand -group REGISTER /MIPS_Processor_TB/DUV/ALU_UNIT/imm_i
-add wave -noupdate -expand -group REGISTER -color Coral -label t0 -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t0/data_o
+add wave -noupdate -expand -group REGISTER -color Coral -label t0 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t0/data_o
 add wave -noupdate -expand -group REGISTER -label t1 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t1/data_o
 add wave -noupdate -expand -group REGISTER -label t2 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t2/data_o
 add wave -noupdate -expand -group REGISTER -label t3 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t3/data_o
@@ -22,15 +22,11 @@ add wave -noupdate -expand -group REGISTER -label t5 -radix decimal /MIPS_Proces
 add wave -noupdate -expand -group REGISTER -label t6 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t6/data_o
 add wave -noupdate -expand -group REGISTER -label t7 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/t7/data_o
 add wave -noupdate -expand -group REGISTER -label s0 -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/s0/data_o
-add wave -noupdate -expand -group REGISTER -label s1 -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/s1/data_o
+add wave -noupdate -expand -group REGISTER -label s1 -radix decimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/s1/data_o
 add wave -noupdate -expand -group REGISTER -label s2 -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/s2/data_o
 add wave -noupdate -expand -group REGISTER -label s3 -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/s3/data_o
 add wave -noupdate -expand -group REGISTER -label sp -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/sp/data_o
 add wave -noupdate -expand -group REGISTER -color Coral -label ra -radix hexadecimal /MIPS_Processor_TB/DUV/REGISTER_FILE_UNIT/ra/data_o
-add wave -noupdate -expand -group REGISTER -radix hexadecimal /MIPS_Processor_TB/DUV/read_data_1_w
-add wave -noupdate -expand -group REGISTER -radix hexadecimal /MIPS_Processor_TB/DUV/read_data_2_w
-add wave -noupdate -expand -group REGISTER -radix hexadecimal /MIPS_Processor_TB/DUV/write_data_w
-add wave -noupdate -expand -group REGISTER /MIPS_Processor_TB/DUV/ID_instruction_w
 add wave -noupdate -group {ALU CTRL} /MIPS_Processor_TB/DUV/ALU_CTRL/alu_op_i
 add wave -noupdate -group {ALU CTRL} /MIPS_Processor_TB/DUV/ALU_CTRL/alu_function_i
 add wave -noupdate -group {ALU CTRL} /MIPS_Processor_TB/DUV/ALU_CTRL/jump_register_o
@@ -96,7 +92,7 @@ add wave -noupdate -group {Write register} -radix unsigned /MIPS_Processor_TB/DU
 add wave -noupdate -group {Shifter R} -radix hexadecimal /MIPS_Processor_TB/DUV/Shifter_R/data_i
 add wave -noupdate -group {Shifter R} -radix hexadecimal /MIPS_Processor_TB/DUV/Shifter_R/data_o
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {19 ps} 0}
+WaveRestoreCursors {{Cursor 1} {33 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 228

@@ -6,14 +6,16 @@ module Pipeline_Register
 (	
 	input clk,
 	input reset,
+	input enable,
+	input flush,
 	input [N_BITS-1:0] dataIn,
 	output reg [N_BITS-1:0] dataOut
 );
 
 always @ (negedge clk) begin
-	if(reset==0)
+	if(reset==0 || flush)
 		dataOut <= 0;
-	else
+	else if (enable == 0)
 		dataOut <= dataIn;
 end
 	  

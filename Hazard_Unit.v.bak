@@ -1,0 +1,17 @@
+module Hazard_Unit
+(	
+	input EX_mem_read,
+	input [4:0] ID_reg_rs,
+	input [4:0] ID_reg_rt,
+	input [4:0] EX_reg_rt,
+	input MEM_branch_i,
+	input MEM_jump_i,
+	input MEM_jr_i,
+	output pc_write_o,
+	output IF_ID_write_o,
+	output stall_o,
+	output IF_ID_flush,
+	output ID_EX_flush,
+	output EX_MEM_flush
+);
+endmodule 
